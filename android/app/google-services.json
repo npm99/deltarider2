@@ -1,0 +1,227 @@
+{
+  "project_info": {
+    "project_number": "1026422127449",
+    "firebase_url": "https://panda-restaurant.firebaseio.com",
+    "project_id": "panda-restaurant",
+    "storage_bucket": "panda-restaurant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026422127449:android:4de3b1efec64c6058c2a48",
+        "android_client_info": {
+          "package_name": "co.deltafood.deltarider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xIcs4PrkPWEWPVmcUmv4HapPQjZkEfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026422127449-61oafmhjpgc4a64l31mmaqruvj1q5qst.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.deltafood.dkitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026422127449:android:7d68082597f0c2b48c2a48",
+        "android_client_info": {
+          "package_name": "co.deltafood.deltashop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xIcs4PrkPWEWPVmcUmv4HapPQjZkEfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026422127449-61oafmhjpgc4a64l31mmaqruvj1q5qst.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.deltafood.dkitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026422127449:android:78769a69d49a03cc",
+        "android_client_info": {
+          "package_name": "co.deltafood.dwaiter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xIcs4PrkPWEWPVmcUmv4HapPQjZkEfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026422127449-61oafmhjpgc4a64l31mmaqruvj1q5qst.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.deltafood.dkitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026422127449:android:3def87ae0f9d73958c2a48",
+        "android_client_info": {
+          "package_name": "co.deltafood.rider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xIcs4PrkPWEWPVmcUmv4HapPQjZkEfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026422127449-61oafmhjpgc4a64l31mmaqruvj1q5qst.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.deltafood.dkitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026422127449:android:bff041fac501be5f8c2a48",
+        "android_client_info": {
+          "package_name": "com.imin.printer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xIcs4PrkPWEWPVmcUmv4HapPQjZkEfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026422127449-61oafmhjpgc4a64l31mmaqruvj1q5qst.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.deltafood.dkitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026422127449:android:d02b4e01ccdc618f",
+        "android_client_info": {
+          "package_name": "io.ionic.deltafood.waiter2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xIcs4PrkPWEWPVmcUmv4HapPQjZkEfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026422127449-raj2kk51um0rs5v57mtaqbva03ut77ch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026422127449-61oafmhjpgc4a64l31mmaqruvj1q5qst.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.deltafood.dkitchen"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

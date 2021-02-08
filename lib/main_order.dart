@@ -1,0 +1,225 @@
+import 'dart:async';
+
+import 'package:deltarider2/drawer.dart';
+import 'package:deltarider2/field/showtoast.dart';
+import 'package:deltarider2/location/location.dart';
+import 'package:deltarider2/order/order.dart';
+import 'package:deltarider2/recieve/send.dart';
+import 'package:deltarider2/setting.dart';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_session/flutter_session.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
+
+import 'api/order_api.dart';
+
+String id, code, appBar = '';
+DatabaseReference databaseReference,
+    databaseDelivery,
+    databaseAddDelivery,
+    databaseRider;
+dynamic token;
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+int current = 0, past = 0;
+Position position;
+FToast fToast;
+
+class MyHomeApp extends StatelessWidget {
+  Future<void> setNode(BuildContext context) async {
+    token = await FlutterSession().get('token');
+    id = await token['data']['id_res_auto'];
+    code = await token['data']['code'];
+
+    databaseReference = firebaseDatabase.reference().child('${id}_${code}');
+
+    databaseDelivery =
+        firebaseDatabase.reference().child('${id}_${code}/delivery');
+
+    databaseAddDelivery =
+        firebaseDatabase.reference().child('${id}_${code}/add_delivery');
+
+    databaseRider = firebaseDatabase.reference().child('${id}_${code}/rider');
+  }
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    setNode(context);
+    print('aaa');
+    return MaterialApp(
+      title: 'Delta Food',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        fontFamily: 'Kanit',
+      ),
+      home: MyHomePage(),
+      // darkTheme: ThemeData(
+      //   accentColor: Colors.deepPurple[500],
+      //   brightness: Brightness.dark,
+      // ),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  Location location;
+  int _selectedIndex = 0;
+  final List<Widget> _children = [Order(), Send(), PageLocations(), Setting()];
+  final List<String> _appBar = ['ออร์เดอร์', 'การจัดส่ง', 'แผนที่', ''];
+  final GlobalKey _scaffoldKey = new GlobalKey<ScaffoldState>();
+  DateTime backButtonPressTime;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Future notify() async {
+    token = await FlutterSession().get('token');
+    id = token['data']['id_res_auto'];
+    code = token['data']['code'];
+    databaseAddDelivery =
+        firebaseDatabase.reference().child('${id}_${code}/add_delivery');
+
+    bool fist = true;
+    databaseAddDelivery.onValue.listen((event) {
+      if (!fist) {
+        showNotification('ออร์เดอร์อัพเดต', 'รายการสั่งอาหารมาใหม่');
+      } else {
+        fist = false;
+      }
+      print('change  ${event.snapshot.value}');
+    });
+  }
+
+  Future selectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: $payload');
+    }
+    setState(() {
+      _selectedIndex = 0;
+    });
+  }
+
+  void getCurrentLocation() async {
+    Position res = await Geolocator.getCurrentPosition();
+    setState(() {
+      position = res;
+    });
+  }
+
+  @override
+  void initState() {
+    fToast = FToast();
+    fToast.init(context);
+
+    databaseDelivery =
+        firebaseDatabase.reference().child('${id}_${code}/delivery');
+    databaseAddDelivery =
+        firebaseDatabase.reference().child('${id}_${code}/add_delivery');
+    databaseRider = firebaseDatabase.reference().child('${id}_${code}/rider');
+    getCurrentLocation();
+    super.initState();
+    location = new Location();
+    location.onLocationChanged.listen((event) {
+      getCurrentLocation();
+      //print('lat ${position.latitude}   lng  ${position.longitude}');
+    });
+    // databaseReference = firebaseDatabase.reference().child('${id}_${code}');
+
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android =
+        new AndroidInitializationSettings('@drawable/icon_notification');
+    var iOS = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android: android, iOS: iOS);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: selectNotification);
+  }
+
+  @override
+  void didChangeDependencies() async {
+    location = new Location();
+    location.onLocationChanged.listen((event) {
+      getCurrentLocation();
+    });
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: new AppBar(
+        centerTitle: true,
+        title: Text('${_appBar[_selectedIndex]}',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        toolbarHeight: 50,
+      ),
+      drawer: Drawer(
+        //semanticLabel: 'aaa',
+        child: MenuDrawer(),
+      ),
+      body: WillPopScope(
+          child: _children[_selectedIndex], onWillPop: handleOnWillPop),
+      bottomNavigationBar: new BottomNavigationBar(
+        elevation: 50,
+        iconSize: 25,
+        //selectedIconTheme: IconThemeData(color: Colors.black),
+        unselectedFontSize: 11,
+        selectedFontSize: 11,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.square_list),
+            activeIcon: Icon(CupertinoIcons.square_list_fill),
+            title: Text('ออร์เดอร์'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.delivery_dining),
+            title: Text('การจัดส่ง'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map_outlined),
+            activeIcon: Icon(Icons.map),
+            title: Text('แผนที่'),
+          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(CupertinoIcons.gear_alt),
+          //   activeIcon: Icon(CupertinoIcons.gear_solid),
+          //   title: Text('ตั้งค่า'),
+          // ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  Future<bool> handleOnWillPop() async {
+    DateTime now = DateTime.now();
+    bool backButton = backButtonPressTime == null ||
+        now.difference(backButtonPressTime) > Duration(seconds: 3);
+
+    if (backButton) {
+      backButtonPressTime = now;
+      showToastBottom(
+          text: 'แตะอีกครั้งเพื่อออก',
+          color: Colors.deepPurple.withOpacity(0.7));
+      return false;
+    }
+    return true;
+  }
+}
