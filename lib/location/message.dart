@@ -1,8 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bubble/bubble.dart';
+import 'package:deltarider2/api/api_data.dart';
 import 'package:deltarider2/api/toJsonLocation.dart';
+import 'package:deltarider2/api/toJsonMessage.dart';
+import 'package:deltarider2/location/bubbleChat.dart';
+import 'package:deltarider2/main_order.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 
 import '../config.dart';
@@ -17,154 +25,174 @@ class MessageLocation extends StatefulWidget {
 }
 
 class _MessageLocationState extends State<MessageLocation> {
-  // Locations locations;
-  //
-  // _MessageLocationState(this.locations);
-
-  List _listMessage;
+  Stream stream;
+  var randomizer = new Random();
+  final ScrollController _scrollController = ScrollController();
 
   final GlobalKey scaffoldKeyAlert = new GlobalKey<ScaffoldState>();
   TextEditingController _message = TextEditingController();
 
   Future onSend(String memberID) async {
+    print('member_$memberID');
     String params = jsonEncode(
-        <String, String>{"member_id": memberID, "message": _message.text});
+        <String, String>{"mm_id": memberID, "message": _message.text});
     http.post('${Config.API_URL}/send_message', body: params).then((res) async {
       print(res.statusCode);
-      print(memberID);
-      print(_message.text);
       print(res.body);
-
       if (res.body == '1') {
         _message.clear();
+        databaseChat.child('member_$memberID').set(randomizer.nextInt(100));
+        loadMessage();
       }
     });
   }
 
-  void reloadMessage() async {
-    //List list = await fetchMessage();
-    // setState(() {
-    //   _listMessage = list;
-    // });
+  void loadMessage() async {
+    Stream _stream = databaseChat.reference().child('member_${widget.locations.memberId}').onValue
+        .asyncExpand((event) => getChet(widget.locations.memberId));
+    setState(() {
+      stream = _stream;
+    });
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    loadMessage();
+    databaseChat.reference().child('member_${widget.locations.memberId}').onValue.listen((event) {
+
+        print('${event.snapshot.value}');
+      });
+    super.initState();
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //   // TODO: implement didChangeDependencies
+  //   databaseChat.onValue.listen((event) {
+  //     print('MM '+event.snapshot.value);
+  //   });
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     double px = 1 / pixelRatio;
-
-    BubbleStyle styleSomebody = BubbleStyle(
-      nip: BubbleNip.leftTop,
-      color: Colors.white,
-      elevation: 1 * px,
-      margin: BubbleEdges.only(top: 8.0, right: 50.0),
-      alignment: Alignment.topLeft,
-    );
-    BubbleStyle styleMe = BubbleStyle(
-      nip: BubbleNip.rightTop,
-      color: Color.fromARGB(255, 204, 204, 255),
-      elevation: 1 * px,
-      margin: BubbleEdges.only(top: 8.0, left: 50.0),
-      alignment: Alignment.topRight,
-    );
-
     return Scaffold(
-      extendBody: true,
       key: scaffoldKeyAlert,
-      body: SingleChildScrollView(
-        reverse: true,
-        //padding: EdgeInsets.all(8.0),
-        child: Container(
-          padding: EdgeInsets.only(bottom: 70, right: 5, left: 5),
-          color: Colors.black.withAlpha(5),
-          child: Column(
-            children: [
-              // Bubble(
-              //   alignment: Alignment.center,
-              //   color: Color.fromARGB(255, 212, 234, 244),
-              //   elevation: 1 * px,
-              //   margin: BubbleEdges.only(top: 8.0),
-              //   child: Text('TODAY', style: TextStyle(fontSize: 10)),
-              // ),
-              Bubble(
-                style: styleSomebody,
-                child: Text(
-                    'Hi Jason. Sorry to bother you. I have a queston for you.'),
-              ),
-              Bubble(
-                style: styleMe,
-                child: Text('Whats\'up?'),
-              ),
-              Bubble(
-                style: styleSomebody,
-                child: Text('I\'ve been having a problem with my computer.'),
-              ),
-              Bubble(
-                style: styleSomebody,
-                margin: BubbleEdges.only(top: 2.0),
-                nip: BubbleNip.no,
-                child: Text('Can you help me?'),
-              ),
-              Bubble(
-                style: styleMe,
-                child: Text('Ok'),
-              ),
-              Bubble(
-                style: styleMe,
-                nip: BubbleNip.no,
-                margin: BubbleEdges.only(top: 2.0),
-                child: Text('What\'s the problem?'),
-              ),
-            ],
-          ),
-        ),
+      // backgroundColor: Colors.white,
+      //extendBody: true,
+      appBar: AppBar(
+        title: Text(widget.locations.member.mmName),
+        centerTitle: true,
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: Container(
-            color: Color.fromARGB(250, 224, 224, 224),
-            //height: 100,
-            padding: EdgeInsets.only(right: 5),
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    child: new TextFormField(
-                      minLines: 1,
-                      maxLines: 5,
-                      controller: _message,
-                      autofocus: false,
-                      style: new TextStyle(fontSize: 14.0),
-                      decoration: new InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white60,
-                        hintText: 'กรอกข้อความ...',
-                        contentPadding:
-                            const EdgeInsets.only(left: 10.0, right: 10),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: new BorderSide(color: Colors.white60),
-                          borderRadius: new BorderRadius.circular(25.7),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: new BorderSide(color: Colors.white),
-                          borderRadius: new BorderRadius.circular(25.7),
+      body: Stack(
+        children: [
+          Container(
+              //margin: EdgeInsets.only(bottom: 5, right: 5, left: 5),
+              color: Colors.black.withAlpha(5),
+              child: StreamBuilder(
+                  stream: stream,
+                  builder: (context, snapshot) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_scrollController.hasClients) {
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          curve: Curves.easeIn,
+                          duration: const Duration(milliseconds: 100),
+                        );
+                      } else {
+                        setState(() => null);
+                      }
+                    });
+                    if (snapshot.hasData) {
+                      // print(snapshot.data.length);
+                      if (snapshot.data.length == 0) {
+                        return Center(
+                          child: Text('fff'),
+                        );
+                      }
+                      return ListView.builder(
+                          controller: _scrollController,
+                          //reverse: true,
+                          padding: EdgeInsets.only(bottom: 70),
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext context, index) {
+                            ChatUser chat = snapshot.data[index];
+
+                            if (chat.byUser == '0') {
+                              return chatAdminBubble(context,
+                                  px: px,
+                                  locations: widget.locations,
+                                  chat: snapshot.data[index]);
+                            }
+                            //styleUser
+                            return chatUserBubble(context,
+                                px: px,
+                                locations: widget.locations,
+                                chat: snapshot.data[index]);
+                          });
+                    }
+                    return SpinKitRing(
+                      color: Colors.deepPurple[500],
+                      lineWidth: 5,
+                    );
+                  })),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              color: Colors.white,
+              child: Container(
+                  color: Color.fromARGB(250, 224, 224, 224),
+                  //height: 100,
+                  padding: EdgeInsets.only(right: 5),
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 7),
+                          child: new TextFormField(
+                            minLines: 1,
+                            maxLines: 5,
+                            controller: _message,
+                            autofocus: false,
+                            style: new TextStyle(fontSize: 14.0),
+                            decoration: new InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white60,
+                              hintText: 'กรอกข้อความ...',
+                              contentPadding:
+                                  const EdgeInsets.only(left: 10.0, right: 10),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    new BorderSide(color: Colors.white60),
+                                borderRadius: new BorderRadius.circular(25.7),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: new BorderSide(color: Colors.white),
+                                borderRadius: new BorderRadius.circular(25.7),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    onSend(widget.locations.memberId);
-                    print('send');
-                  },
-                  child: Icon(Icons.send_rounded, color: Colors.deepPurple),
-                )
-              ],
-            )),
+                      InkWell(
+                        onTap: () {
+                          onSend(widget.locations.memberId);
+                          print('send');
+                        },
+                        child:
+                            Icon(Icons.send_rounded, color: Colors.deepPurple),
+                      )
+                    ],
+                  )),
+            ),
+          )
+        ],
       ),
     );
   }

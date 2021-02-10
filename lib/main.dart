@@ -5,8 +5,14 @@ import 'package:deltarider2/field/password_field.dart';
 import 'package:deltarider2/field/user_field.dart';
 import 'package:deltarider2/main_order.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_session/flutter_session.dart';
+
+import 'api/order_api.dart';
+
+NotificationAppLaunchDetails notificationAppLaunchDetails;
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +20,7 @@ void main() async {
   if (token == null) {
     token = '';
   }
+  MyHomeApp().setNode();
   // print(token);
   runApp(MaterialApp(
     home: token == '' ? MyApp() : MyHomeApp(),

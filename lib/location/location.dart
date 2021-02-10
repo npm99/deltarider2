@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:typed_data';
 
-import 'package:deltarider2/field/showtoast.dart';
+import 'package:deltarider2/api/toJsonReceiveOrders.dart';
 import 'package:deltarider2/location/message.dart';
+import 'package:deltarider2/recieve/detail_receive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main_order.dart';
@@ -27,6 +27,7 @@ class PageLocations extends StatefulWidget {
 class _LocationState extends State<PageLocations> {
   GoogleMapController _controller;
   List<Locations> list = new List();
+  List<ReceiveOrders> listReceive = new List();
   Set<Marker> _markers = {};
   int _icon = 0, _index = 0, _count = 0;
   bool _show = false;
@@ -76,17 +77,18 @@ class _LocationState extends State<PageLocations> {
   // }
 
   Future _createMarkerImageFromAsset(BuildContext context) async {
-
     if (_markerIcon == null) {
       bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
       String icon = "assets/images/map-marker.png";
       setState(() {
-        if (isIOS) {icon = "assets/images/map-marker32.png";}
+        if (isIOS) {
+          icon = "assets/images/map-marker32.png";
+        }
       });
 
       ImageConfiguration configuration = ImageConfiguration();
-      BitmapDescriptor bmpd = await BitmapDescriptor.fromAssetImage(
-          configuration, icon);
+      BitmapDescriptor bmpd =
+          await BitmapDescriptor.fromAssetImage(configuration, icon);
       // BitmapDescriptor mbmpd = await BitmapDescriptor.fromAssetImage(
       //     configuration, 'assets/images/location.png');
       setState(() {
@@ -98,65 +100,99 @@ class _LocationState extends State<PageLocations> {
 
   Future<void> _alertMessage(int i) async {
     Locations loData = list[i];
-    return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.only(top: 20),
-            titlePadding: EdgeInsets.zero,
-            backgroundColor: Color.alphaBlend(
-                Color.fromARGB(50, 224, 224, 224), Colors.white),
-            title: Row(
-              //mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: EdgeInsets.only(top: 20, left: 30),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(loData.member.picUrl),
-                      ),
-                      Text('    ${loData.member.mmName}'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Icon(Icons.close),
-                )
-              ],
-            ),
-            content: Container(
-              height: 400,
-              child: MessageLocation(
-                locations: loData,
-              ),
-            ),
-            // actions: [
-            //   FlatButton(
-            //       onPressed: () {
-            //         Navigator.of(context).pop();
-            //       },
-            //       child: Text('ปิด'))
-            // ],
-          );
-        });
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => MessageLocation(
+              locations: loData,
+            )));
+    // return showDialog<void>(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         contentPadding: EdgeInsets.only(top: 20),
+    //         titlePadding: EdgeInsets.zero,
+    //         title: Row(
+    //           //mainAxisSize: MainAxisSize.max,
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //           children: [
+    //             Container(
+    //               padding: EdgeInsets.only(top: 20, left: 30),
+    //               child: Row(
+    //                 children: [
+    //                   CircleAvatar(
+    //                     backgroundImage: NetworkImage(loData.member.picUrl),
+    //                   ),
+    //                   Text('    ${loData.member.mmName}'),
+    //                 ],
+    //               ),
+    //             ),
+    //             InkWell(
+    //               onTap: () {
+    //                 Navigator.of(context).pop();
+    //               },
+    //               child: Icon(Icons.close),
+    //             )
+    //           ],
+    //         ),
+    //         content: Container(
+    //           height: 400,
+    //           child: MessageLocation(
+    //             locations: loData,
+    //           ),
+    //         ),
+    //         // actions: [
+    //         //   FlatButton(
+    //         //       onPressed: () {
+    //         //         Navigator.of(context).pop();
+    //         //       },
+    //         //       child: Text('ปิด'))
+    //         // ],
+    //       );
+    //     });
   }
 
-  void getCurrentLocation() async {
+  Future getCurrentLocation() async {
     Position res = await Geolocator.getCurrentPosition();
-    list = await fetchLocation();
-
+    List _list = await fetchLocation();
+    List _listReceive = await fetchReceiveOrders();
+    print('getCurrentLocation');
     setState(() {
       position = res;
-
+      list = _list;
+      listReceive = _listReceive;
       for (int i = 0; i < list.length; i++) {
         Locations locations = list[i];
-        print(i);
+        _markers.add(new Marker(
+            markerId: MarkerId(locations.memberId),
+            position: LatLng(locations.location.lat, locations.location.lng),
+            icon: _markerIcon,
+            infoWindow: InfoWindow(
+              title: 'ID : ${locations.orderIdRes}',
+              snippet: 'คุณ ${locations.member.mmName}',
+            ),
+            onTap: () {
+              setState(() {
+                print(i);
+                _index = i;
+                _onClickMap();
+              });
+            }));
+      }
+    });
+  }
+
+  Future updateLocation() async {
+    _markers = {};
+    Position res = await Geolocator.getCurrentPosition();
+    List _list = await fetchLocation();
+    List _listReceive = await fetchReceiveOrders();
+    print('updateLocation');
+    setState(() {
+      position = res;
+      list = _list;
+      listReceive = _listReceive;
+      for (int i = 0; i < list.length; i++) {
+        Locations locations = list[i];
         _markers.add(new Marker(
             markerId: MarkerId(locations.memberId),
             position: LatLng(locations.location.lat, locations.location.lng),
@@ -185,10 +221,19 @@ class _LocationState extends State<PageLocations> {
     }
   }
 
+  FutureOr onGoBack() {
+    getCurrentLocation();
+    setState(() {});
+    print('fff');
+  }
+
   @override
   void initState() {
     //reload();
     getCurrentLocation();
+    databaseChat.onValue.listen((event) {
+      print(event.snapshot.value);
+    });
     super.initState();
   }
 
@@ -226,6 +271,9 @@ class _LocationState extends State<PageLocations> {
                         zoom: 15.0),
                     onMapCreated: (GoogleMapController controller) {
                       _controller = controller;
+                      if (list == null) {
+                        getCurrentLocation();
+                      }
                     },
                   ),
                   Align(
@@ -259,192 +307,216 @@ class _LocationState extends State<PageLocations> {
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
           height: 140,
-          child: Card(
-              elevation: 30,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              child: Container(
-                  //padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-                  child: DefaultTextStyle(
-                style: TextStyle(
-                    fontFamily: 'Kanit',
-                    fontSize: 14,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w400),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.black12,
-                        backgroundImage: locations.member.picUrl.isNotEmpty
-                            ? NetworkImage(
-                                locations.member.picUrl,
-                                scale: 10,
-                              )
-                            : AssetImage('assets/images/person_logo.png'),
-                      ),
-                      title: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                              child: Text(
-                            '${locations.member.mmName}',
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                          ButtonBar(
-                            alignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            //buttonMinWidth: 100,
-                            children: [
-                              ClipOval(
-                                child: Material(
-                                  color: Colors.blue[500], // button color
-                                  child: InkWell(
-                                    child: SizedBox(
-                                        width: 35,
-                                        height: 35,
-                                        child: Icon(
-                                          Icons.navigation_rounded,
-                                          color: Colors.white,
-                                        )),
-                                    onTap: () {
-                                      MapLauncherDemo(
-                                              latLng: locations.location.lat,
-                                              lngLng: locations.location.lng)
-                                          .openMapsSheet(context);
-                                    },
+          child: InkWell(
+            onTap: () {
+              print('ss');
+              int indexReceive = listReceive
+                  .indexWhere((item) => item.orderId == locations.orderId);
+              print(
+                  'indexReceive ${listReceive.indexWhere((item) => item.orderId == locations.orderId)}');
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ReceiveDetail(listReceive[indexReceive])))
+                  .whenComplete(() {
+                print('sss');
+                setState(() {
+                  _show = false;
+                });
+                updateLocation();
+              });
+            },
+            child: Card(
+                elevation: 30,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                child: Container(
+                    //padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                    child: DefaultTextStyle(
+                  style: TextStyle(
+                      fontFamily: 'Kanit',
+                      fontSize: 14,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.black12,
+                          backgroundImage: locations.member.picUrl.isNotEmpty
+                              ? NetworkImage(
+                                  locations.member.picUrl,
+                                  scale: 10,
+                                )
+                              : AssetImage('assets/images/person_logo.png'),
+                        ),
+                        title: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                                child: Text(
+                              '${locations.member.mmName}',
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              //buttonMinWidth: 100,
+                              children: [
+                                ClipOval(
+                                  child: Material(
+                                    color: Colors.blue[500], // button color
+                                    child: InkWell(
+                                      child: SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Icon(
+                                            Icons.navigation_rounded,
+                                            color: Colors.white,
+                                          )),
+                                      onTap: () {
+                                        openMapsSheet(context,
+                                            latLng: locations.location.lat,
+                                            lngLng: locations.location.lng);
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              ClipOval(
-                                child: Material(
-                                  color: Colors.teal[300], // button color
-                                  child: InkWell(
-                                    child: SizedBox(
-                                        width: 35,
-                                        height: 35,
-                                        child: Icon(
-                                          Icons.message,
-                                          color: Colors.white,
-                                          size: 20,
-                                        )),
-                                    onTap: () {
-                                      _alertMessage(_index);
-                                    },
+                                ClipOval(
+                                  child: Material(
+                                    color: Colors.teal[300], // button color
+                                    child: InkWell(
+                                      child: SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Icon(
+                                            Icons.message,
+                                            color: Colors.white,
+                                            size: 20,
+                                          )),
+                                      onTap: () {
+                                        _alertMessage(_index);
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              locations.member.phoneId.isEmpty
-                                  ? Padding(
-                                      padding: EdgeInsets.zero,
-                                    )
-                                  : ClipOval(
-                                      child: Material(
-                                        color: Colors.cyan[500], // button color
-                                        child: InkWell(
-                                          child: SizedBox(
-                                              width: 35,
-                                              height: 35,
-                                              child: Icon(
-                                                Icons.local_phone_rounded,
-                                                color: Colors.white,
-                                                size: 20,
-                                              )),
-                                          onTap: () {
-                                            callNow(locations.member.phoneId);
-                                          },
+                                locations.member.phoneId.isEmpty
+                                    ? Padding(
+                                        padding: EdgeInsets.zero,
+                                      )
+                                    : ClipOval(
+                                        child: Material(
+                                          color:
+                                              Colors.cyan[500], // button color
+                                          child: InkWell(
+                                            child: SizedBox(
+                                                width: 35,
+                                                height: 35,
+                                                child: Icon(
+                                                  Icons.local_phone_rounded,
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                )),
+                                            onTap: () {
+                                              callNow(locations.member.phoneId);
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
-                            ],
-                          )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('ID : '),
+                                    Flexible(
+                                        child: Text('${locations.orderIdRes}',
+                                            overflow: TextOverflow.ellipsis))
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text('เวลาสั่ง : '),
+                                    Flexible(
+                                        child: Text('${locations.timeStart}',
+                                            overflow: TextOverflow.ellipsis))
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5),
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('ราคารวม : '),
+                                    Flexible(
+                                        child: Text(
+                                            '${locations.sumPrice}  บาท',
+                                            overflow: TextOverflow.ellipsis))
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text('การชำระ : '),
+                                    Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        //side: BorderSide(width: 5, color: Colors.green)
+                                      ),
+                                      color: locations.paymentType == '0'
+                                          ? Colors.red[800]
+                                          : Colors.green,
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          locations.paymentType == '0'
+                                              ? 'เก็บเงินปลายทาง'
+                                              : 'โอนแล้ว',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          padding: EdgeInsets.only(left: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text('ID : '),
-                                  Flexible(
-                                      child: Text('${locations.orderIdRes}',
-                                          overflow: TextOverflow.ellipsis))
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text('เวลาสั่ง : '),
-                                  Flexible(
-                                      child: Text('${locations.timeStart}',
-                                          overflow: TextOverflow.ellipsis))
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 5),
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text('ราคารวม : '),
-                                  Flexible(
-                                      child: Text('${locations.sumPrice}  บาท',
-                                          overflow: TextOverflow.ellipsis))
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text('การชำระ : '),
-                                  Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      //side: BorderSide(width: 5, color: Colors.green)
-                                    ),
-                                    color: locations.paymentType == '0'
-                                        ? Colors.red[800]
-                                        : Colors.green,
-                                    child: Container(
-                                      padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        locations.paymentType == '0'
-                                            ? 'เก็บเงินปลายทาง'
-                                            : 'โอนแล้ว',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 13),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ))),
+                    ],
+                  ),
+                ))),
+          ),
         ));
   }
 
@@ -477,6 +549,7 @@ class _LocationState extends State<PageLocations> {
             ),
             onTap: () {
               function();
+              onGoBack();
               //databaseRider.reference().child('528').remove();
               // ToastMe().showToastCenter(text: 'aaaa',color: Colors.black);
             },

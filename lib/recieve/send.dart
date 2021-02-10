@@ -29,7 +29,7 @@ class _SendState extends State<Send> {
             .child(locationsData.orderId)
             .set({'lat': position.latitude, 'lng': position.longitude});
       }
-      print('check Location');
+      // print('check Location');
     }
   }
 

@@ -99,10 +99,10 @@ class _OrderState extends State<Order> {
   @override
   void didChangeDependencies() {
     //---------------------------------------------------------
-    databaseRider.onValue.listen((event) {
-      print('key  ${event.snapshot.key}');
-      print('value  ${event.snapshot.value}');
-    });
+    // databaseRider.onValue.listen((event) {
+    //   print('key  ${event.snapshot.key}');
+    //   print('value  ${event.snapshot.value}');
+    // });
     //---------------------------------------------------------
     Timer.periodic(Duration(seconds: 15),
         (Timer t) => Send().createState().checkReceiveOrders());

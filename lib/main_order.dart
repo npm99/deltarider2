@@ -17,20 +17,20 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 
 import 'api/order_api.dart';
+import 'main.dart';
 
-String id, code, appBar = '';
+String id, code;
 DatabaseReference databaseReference,
     databaseDelivery,
     databaseAddDelivery,
-    databaseRider;
+    databaseRider,
+    databaseChat;
 dynamic token;
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-int current = 0, past = 0;
 Position position;
 FToast fToast;
 
 class MyHomeApp extends StatelessWidget {
-  Future<void> setNode(BuildContext context) async {
+  Future<void> setNode() async {
     token = await FlutterSession().get('token');
     id = await token['data']['id_res_auto'];
     code = await token['data']['code'];
@@ -44,12 +44,13 @@ class MyHomeApp extends StatelessWidget {
         firebaseDatabase.reference().child('${id}_${code}/add_delivery');
 
     databaseRider = firebaseDatabase.reference().child('${id}_${code}/rider');
+    databaseChat = firebaseDatabase.reference().child('${id}_${code}/chat');
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    setNode(context);
+    setNode();
     print('aaa');
     return MaterialApp(
       title: 'Delta Food',
@@ -80,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _scaffoldKey = new GlobalKey<ScaffoldState>();
   DateTime backButtonPressTime;
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -203,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // ),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: onItemTapped,
       ),
     );
   }

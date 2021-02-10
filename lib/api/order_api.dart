@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:deltarider2/api/toJsonLocation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
+import '../main.dart';
 import '../main_order.dart';
 import 'toJsonReceiveOrders.dart';
 import 'toJsonOrder.dart';
@@ -91,4 +92,16 @@ Future<Null> showNotification(title,body) async {
       payload: 'AndroidCoding.in');
 
   print('notify');
+}
+
+void requestIOSPermissions(
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) {
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
 }

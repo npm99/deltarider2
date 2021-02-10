@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import GoogleMaps
+import UserNotifications
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -10,6 +11,15 @@ import GoogleMaps
   ) -> Bool {
     GMSServices.provideAPIKey("AIzaSyADQl79AootGyhKCW8MQ8xxz561gPFu0rA")
     GeneratedPluginRegistrant.register(with: self)
+    if #available(iOS 10.0, *) {
+        UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+      }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+
+  // This method will be called when app received push notifications in foreground
+      func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
+      {
+          completionHandler([.alert, .badge, .sound])
+      }
 }

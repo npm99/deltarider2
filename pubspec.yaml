@@ -54,7 +54,7 @@ flutter_icons:
 flutter_application_id:
   android:
     id: "co.deltafood.rider"
-    name: "Dalta Rider"
+    name: "Delta Rider"
   ios:
     id: "co.deltafood.rider"
     name: "Delta Rider"
@@ -82,6 +82,7 @@ flutter:
     - assets/images/map-marker32.png
     - assets/images/map-marker64.png
     - assets/images/location.png
+    - assets/images/map.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
