@@ -151,6 +151,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void didChangeDependencies() async {
+    if(position == null){
+      getCurrentLocation();
+    }
     location = new Location();
     location.onLocationChanged.listen((event) {
       getCurrentLocation();
