@@ -107,11 +107,11 @@ class _OrderState extends State<Order> {
     Timer.periodic(Duration(seconds: 15),
         (Timer t) => Send().createState().checkReceiveOrders());
     //-------------------------------------------------
-    databaseDelivery.onValue.listen((event) {
-      loadLocation();
-      print(event.snapshot.key);
-      print(event.snapshot.value);
-    });
+    // databaseDelivery.onValue.listen((event) {
+    //   loadLocation();
+    //   print(event.snapshot.key);
+    //   print(event.snapshot.value);
+    // });
     //--------------------------------------------------------
     MyHomePage().createState().notify().asStream();
     super.didChangeDependencies();

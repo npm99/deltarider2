@@ -118,15 +118,15 @@ class _MyHomePageState extends State<MyHomePage> {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission != PermissionStatus.granted) {
       LocationPermission permission = await Geolocator.requestPermission();
-      if (permission != PermissionStatus.granted)
-       getCurrentLocation();
-      return;
+      if (permission != PermissionStatus.granted) {
+        getCurrentLocation();
+        return;
+      }
     }
-   getCurrentLocation();
+    getCurrentLocation();
   }
 
   void getCurrentLocation() async {
-
     Position res = await Geolocator.getCurrentPosition();
     setState(() {
       position = res;
@@ -137,19 +137,20 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     fToast = FToast();
     fToast.init(context);
+    checkGetCurrentLocation();
 
     databaseDelivery =
         firebaseDatabase.reference().child('${id}_${code}/delivery');
     databaseAddDelivery =
         firebaseDatabase.reference().child('${id}_${code}/add_delivery');
     databaseRider = firebaseDatabase.reference().child('${id}_${code}/rider');
-    getCurrentLocation();
+
     super.initState();
-    location = new Location();
-    location.onLocationChanged.listen((event) {
-      checkGetCurrentLocation();
-      //print('lat ${position.latitude}   lng  ${position.longitude}');
-    });
+    // location = new Location();
+    // location.onLocationChanged.listen((event) {
+    //   getCurrentLocation();
+    //   //print('lat ${position.latitude}   lng  ${position.longitude}');
+    // });
     // databaseReference = firebaseDatabase.reference().child('${id}_${code}');
 
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
@@ -163,12 +164,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void didChangeDependencies() async {
-    if(position == null){
-      checkGetCurrentLocation();
-    }
     location = new Location();
+    if (position == null) {
+      getCurrentLocation();
+    }
     location.onLocationChanged.listen((event) {
-      checkGetCurrentLocation();
+      getCurrentLocation();
     });
     super.didChangeDependencies();
   }

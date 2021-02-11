@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:deltarider2/config.dart';
 import 'package:deltarider2/field/password_field.dart';
@@ -9,18 +10,21 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_session/flutter_session.dart';
 
-import 'api/order_api.dart';
-
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+TargetPlatform plateForm;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dynamic token = await FlutterSession().get('token');
+  if (Platform.isIOS) {
+    MyHomePage().createState().checkGetCurrentLocation();
+  }
   if (token == null) {
     token = '';
+  } else {
+    MyHomeApp().setNode();
   }
-  MyHomeApp().setNode();
   // print(token);
   runApp(MaterialApp(
     home: token == '' ? MyApp() : MyHomeApp(),
