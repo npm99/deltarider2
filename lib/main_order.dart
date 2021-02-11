@@ -114,7 +114,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future checkGetCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission != PermissionStatus.granted) {
+      LocationPermission permission = await Geolocator.requestPermission();
+      if (permission != PermissionStatus.granted)
+       getCurrentLocation();
+      return;
+    }
+   getCurrentLocation();
+  }
+
   void getCurrentLocation() async {
+
     Position res = await Geolocator.getCurrentPosition();
     setState(() {
       position = res;
@@ -135,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     location = new Location();
     location.onLocationChanged.listen((event) {
-      getCurrentLocation();
+      checkGetCurrentLocation();
       //print('lat ${position.latitude}   lng  ${position.longitude}');
     });
     // databaseReference = firebaseDatabase.reference().child('${id}_${code}');
@@ -152,11 +164,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void didChangeDependencies() async {
     if(position == null){
-      getCurrentLocation();
+      checkGetCurrentLocation();
     }
     location = new Location();
     location.onLocationChanged.listen((event) {
-      getCurrentLocation();
+      checkGetCurrentLocation();
     });
     super.didChangeDependencies();
   }
