@@ -98,57 +98,12 @@ class _LocationState extends State<PageLocations> {
     }
   }
 
-  Future<void> _alertMessage(int i) async {
+  Future<void> goToMessage(int i) async {
     Locations loData = list[i];
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => MessageLocation(
               locations: loData,
             )));
-    // return showDialog<void>(
-    //     context: context,
-    //     builder: (BuildContext context) {
-    //       return AlertDialog(
-    //         contentPadding: EdgeInsets.only(top: 20),
-    //         titlePadding: EdgeInsets.zero,
-    //         title: Row(
-    //           //mainAxisSize: MainAxisSize.max,
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //             Container(
-    //               padding: EdgeInsets.only(top: 20, left: 30),
-    //               child: Row(
-    //                 children: [
-    //                   CircleAvatar(
-    //                     backgroundImage: NetworkImage(loData.member.picUrl),
-    //                   ),
-    //                   Text('    ${loData.member.mmName}'),
-    //                 ],
-    //               ),
-    //             ),
-    //             InkWell(
-    //               onTap: () {
-    //                 Navigator.of(context).pop();
-    //               },
-    //               child: Icon(Icons.close),
-    //             )
-    //           ],
-    //         ),
-    //         content: Container(
-    //           height: 400,
-    //           child: MessageLocation(
-    //             locations: loData,
-    //           ),
-    //         ),
-    //         // actions: [
-    //         //   FlatButton(
-    //         //       onPressed: () {
-    //         //         Navigator.of(context).pop();
-    //         //       },
-    //         //       child: Text('ปิด'))
-    //         // ],
-    //       );
-    //     });
   }
 
   Future getCurrentLocation() async {
@@ -400,7 +355,7 @@ class _LocationState extends State<PageLocations> {
                                             size: 20,
                                           )),
                                       onTap: () {
-                                        _alertMessage(_index);
+                                        goToMessage(_index);
                                       },
                                     ),
                                   ),
