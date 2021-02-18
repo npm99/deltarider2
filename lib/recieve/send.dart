@@ -21,6 +21,7 @@ class _SendState extends State<Send> {
   GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> checkReceiveOrders() async {
+    print(listLocation);
     if (listLocation.isNotEmpty) {
       for (int i = 0; i < listLocation.length; i++) {
         Locations locationsData = listLocation[i];

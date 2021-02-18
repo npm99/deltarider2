@@ -16,6 +16,7 @@ TargetPlatform plateForm;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   dynamic token = await FlutterSession().get('token');
   if (Platform.isIOS) {
     MyHomePage().createState().checkGetCurrentLocation();
@@ -25,7 +26,7 @@ void main() async {
   } else {
     MyHomeApp().setNode();
   }
-  // print(token);
+  print(token);
   runApp(MaterialApp(
     home: token == '' ? MyApp() : MyHomeApp(),
     theme:

@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         fist = false;
       }
-      print('change  ${event.snapshot.value}');
+      // print('change  ${event.snapshot.value}');
     });
   }
 
@@ -137,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     fToast = FToast();
     fToast.init(context);
-    checkGetCurrentLocation();
+    getCurrentLocation();
 
     databaseDelivery =
         firebaseDatabase.reference().child('${id}_${code}/delivery');

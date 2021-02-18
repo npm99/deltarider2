@@ -93,19 +93,22 @@ class _OrderState extends State<Order> {
   void initState() {
     _stream = databaseDelivery.onValue.asyncExpand((event) => getOrders());
     getOrders();
+    loadLocation();
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     //---------------------------------------------------------
-    // databaseRider.onValue.listen((event) {
-    //   print('key  ${event.snapshot.key}');
-    //   print('value  ${event.snapshot.value}');
-    // });
+    databaseRider.onValue.listen((event) {
+      print('key  ${event.snapshot.key}');
+      print('value  ${event.snapshot.value}');
+    });
     //---------------------------------------------------------
-    Timer.periodic(Duration(seconds: 15),
-        (Timer t) => Send().createState().checkReceiveOrders());
+
+    Timer.periodic(Duration(seconds: 15), (timer) {
+      Send().createState().checkReceiveOrders();
+    });
     //-------------------------------------------------
     // databaseDelivery.onValue.listen((event) {
     //   loadLocation();
