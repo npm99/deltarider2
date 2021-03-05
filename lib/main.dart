@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_session/flutter_session.dart';
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -16,7 +17,7 @@ TargetPlatform plateForm;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await firebase_core.Firebase.initializeApp();
   dynamic token = await FlutterSession().get('token');
   if (Platform.isIOS) {
     MyHomePage().createState().checkGetCurrentLocation();

@@ -27,8 +27,8 @@ dependencies:
   flutter_launcher_icons: ^0.8.0
   flutter_application_id: ^1.0.0
   flutter_local_notifications: ^3.0.2
-  firebase_messaging: ^7.0.3
-  firebase_database: ^4.4.0
+#  firebase_messaging: ^7.0.3
+  firebase_database: ^5.0.0
   font_awesome_flutter: ^8.11.0
   google_maps_flutter:
   location: ^3.0.2

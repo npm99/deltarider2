@@ -46,7 +46,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                             : Colors.white,
                     backgroundImage: data['data']['pro_file_url'] != ''
                         ? NetworkImage(
-                            '${Config.URL_PHOTO}/${data['data']['pro_file_url']}',
+                            '${data['data']['pro_file_url']}',
                             scale: 30,
                           )
                         : AssetImage('assets/images/person_logo.png'),
