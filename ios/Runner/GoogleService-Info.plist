@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1026422127449-dv7c0nto9uv3upeorotc95e22jiu7rsn.apps.googleusercontent.com</string>
+	<string>1026422127449-f1i814jsj55lpj50ln8rc6o93kma0itk.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1026422127449-dv7c0nto9uv3upeorotc95e22jiu7rsn</string>
+	<string>com.googleusercontent.apps.1026422127449-f1i814jsj55lpj50ln8rc6o93kma0itk</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDqgoFBnAfovbMYKqWpvFhEJGpFX1C_tR8</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>co.deltafood.rider</string>
+	<string>co.deltafood.drider</string>
 	<key>PROJECT_ID</key>
 	<string>panda-restaurant</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1026422127449:ios:13ef65033eabc9e48c2a48</string>
+	<string>1:1026422127449:ios:d8703d1bd2b05ea38c2a48</string>
 	<key>DATABASE_URL</key>
 	<string>https://panda-restaurant.firebaseio.com</string>
 </dict>

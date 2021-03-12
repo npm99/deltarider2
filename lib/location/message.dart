@@ -110,7 +110,7 @@ class _MessageLocationState extends State<MessageLocation> {
                       // print(snapshot.data.length);
                       if (snapshot.data.length == 0) {
                         return Center(
-                          child: Text('fff'),
+                          child: Text('ไม่มีข้อความ'),
                         );
                       }
                       return ListView.builder(

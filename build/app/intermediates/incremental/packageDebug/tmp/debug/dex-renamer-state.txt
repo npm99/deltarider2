@@ -1,4 +1,0 @@
-#Wed Mar 03 16:36:27 ICT 2021
-base.0=E\:\\intelliJ\\lab_sec\\deltarider2\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

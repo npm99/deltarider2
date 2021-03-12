@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
     bool fist = true;
     databaseAddDelivery.onValue.listen((event) {
       if (!fist) {
-        showNotification('ออร์เดอร์อัพเดต', 'รายการสั่งอาหารมาใหม่');
+        showNotification(title: 'ออร์เดอร์อัพเดต', body: 'รายการสั่งอาหารมาใหม่');
       } else {
         fist = false;
       }

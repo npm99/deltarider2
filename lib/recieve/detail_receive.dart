@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:deltarider2/api/api_data.dart';
 import 'package:deltarider2/api/toJsonReceiveOrders.dart';
 import 'package:deltarider2/field/body.dart';
 import 'package:deltarider2/field/showtoast.dart';
@@ -41,6 +42,7 @@ class _ReceiveDetail extends State<ReceiveDetail> {
       if (res.body == '1') {
         await databaseDelivery.set(randomizer.nextInt(100));
         databaseRider.reference().child('$orderID').remove();
+        loadLocation();
         showToastBottom(
           text: 'ส่งอาหารสำเร็จ',
           color: Colors.black.withOpacity(0.8),

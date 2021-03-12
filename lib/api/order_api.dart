@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:deltarider2/api/toJsonLocation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
 import '../main.dart';
@@ -14,6 +15,7 @@ import 'toJsonDetailFood.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 Future<List<Orders>> fetchOrders() async {
   dynamic token = await FlutterSession().get('token');
@@ -30,11 +32,12 @@ Future<List<ReceiveOrders>> fetchReceiveOrders() async {
   dynamic token = await FlutterSession().get('token');
   String riderID = token['data']['admin_id'];
   String idRes = token['data']['id_res_auto'];
-  final res = await http.get("${Config.API_URL}/load_order_reserve/$idRes/$riderID");
+  final res =
+      await http.get("${Config.API_URL}/load_order_reserve/$idRes/$riderID");
   if (res.statusCode != 200) {
     print(res.statusCode);
   }
-   //print(jsonDecode(res.body));
+  //print(jsonDecode(res.body));
   return receiveOrdersFromJson(res.body);
 }
 
@@ -51,7 +54,8 @@ Future<List<Locations>> fetchLocation() async {
   dynamic token = await FlutterSession().get('token');
   String riderID = token['data']['admin_id'];
   String idResAuto = token['data']['id_res_auto'];
-  final res = await http.get("${Config.API_URL}/get_location/$idResAuto/$riderID?lang=th");
+  final res = await http
+      .get("${Config.API_URL}/get_location/$idResAuto/$riderID?lang=th");
   if (res.statusCode != 200) {
     print(res.statusCode);
   }
@@ -71,7 +75,7 @@ Stream<List<ReceiveOrders>> getReceiveOrders() async* {
   yield await fetchReceiveOrders();
 }
 
-Future<Null> showNotification(title,body) async {
+Future<Null> showNotification({title, body}) async {
   final Int64List vibrationPattern = new Int64List(4);
   vibrationPattern[0] = 0;
   vibrationPattern[1] = 1000;
@@ -98,10 +102,35 @@ void requestIOSPermissions(
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) {
   flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      IOSFlutterLocalNotificationsPlugin>()
+          IOSFlutterLocalNotificationsPlugin>()
       ?.requestPermissions(
-    alert: true,
-    badge: true,
-    sound: true,
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+}
+
+void initFirebaseMessaging() {
+  firebaseMessaging.configure(
+    onMessage: (Map<String, dynamic> message) async {
+      print('onMessage: $message');
+      Map mapNotification = message["notification"];
+      String title = mapNotification["title"];
+      String body = mapNotification["body"];
+      showNotification(title: title, body: body);
+    },
+    onLaunch: (Map<String, dynamic> message) async {
+      print('onLaunch: $message');
+    },
+    onResume: (Map<String, dynamic> message) async {
+      print('onResume: $message');
+    },
   );
+
+  firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true));
+  firebaseMessaging.onIosSettingsRegistered
+      .listen((IosNotificationSettings settings) {
+    print("Settings registered: $settings");
+  });
 }

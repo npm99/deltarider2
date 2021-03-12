@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' show Random;
 
+import 'package:deltarider2/api/api_data.dart';
 import 'package:deltarider2/config.dart';
 import 'package:deltarider2/api/order_api.dart';
 import 'package:deltarider2/field/showtoast.dart';
@@ -9,7 +10,6 @@ import 'package:deltarider2/recieve/send.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'detail_order.dart';
 import '../api/toJsonOrder.dart';
 import 'package:flutter/material.dart';
@@ -84,10 +84,6 @@ class _OrderState extends State<Order> {
     //return null;
   }
 
-  Future<void> loadLocation() async {
-    listLocation = await fetchLocation();
-    print('load Location');
-  }
 
   @override
   void initState() {

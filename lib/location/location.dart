@@ -243,7 +243,13 @@ class _LocationState extends State<PageLocations> {
                               color: Colors.blue[200],
                               function: _onMapTypeButtonPressed),
                           buttonMap(
-                              icon: Icons.my_location, function: movePosition),
+                              icon: Icons.my_location,
+                              function: () {
+                                movePosition();
+                                // showNotification(
+                                //     title: 'ออร์เดอร์อัพเดต',
+                                //     body: 'รายการสั่งอาหารมาใหม่');
+                              }),
                         ],
                       ),
                     ),
