@@ -86,8 +86,8 @@ Map<String, dynamic> _readIosDeviceInfo(
     // 'isPhysicalDevice': data.isPhysicalDevice,
     // 'utsname.sysname:': data.utsname.sysname,
     // 'utsname.nodename:': data.utsname.nodename,
-    'utsname.release:': data.utsname.release,
-    'utsname.version:': data.utsname.version,
+    'version': data.utsname.release,
+    // 'utsname.version:': data.utsname.version,
     // 'utsname.machine:': data.utsname.machine,
   };
 }
