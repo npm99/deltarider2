@@ -3,15 +3,23 @@ import 'dart:async';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
+import '../main.dart';
 import 'order_api.dart';
 
 import 'dart:convert';
+
+Future loadInfo() async {
+  var _deviceData = await getId();
+
+    deviceData = _deviceData;
+
+}
 
 Future getId() async {
   var deviceInfo = DeviceInfoPlugin();
   String tokenFirebase;
   try {
-    firebaseMessaging.getToken().then((String token) {
+   await firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       tokenFirebase = token;
       // print("Token : $token");

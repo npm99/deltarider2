@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:deltarider2/api/infoDevice.dart';
+import 'package:deltarider2/config.dart';
 import 'package:deltarider2/edit_data/change_password.dart';
 import 'package:deltarider2/main.dart';
+import 'package:deltarider2/main_order.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
+import 'package:http/http.dart' as http;
 
 class MenuList extends StatefulWidget {
   @override
@@ -11,10 +17,17 @@ class MenuList extends StatefulWidget {
 
 class _MenuListState extends State<MenuList> {
   void onLogout() {
-    FlutterSession().set('token', '');
-    Navigator.of(context).pop();
-    Navigator.push(context,
-        new CupertinoPageRoute(builder: (BuildContext context) => new MyApp()));
+    DeviceInfo deviceInfo = DeviceInfo.fromJson(deviceData);
+    String params = jsonEncode(
+        <String, dynamic>{'uuid': deviceInfo.uuid, 'admin_id': token['data']['admin_id']});
+    print(params);
+    // http.post('${Config.API_URL}/logout', body:).then((value) {
+
+    // });
+    // FlutterSession().set('token', '');
+    // Navigator.of(context).pop();
+    // Navigator.push(context,
+    //     new CupertinoPageRoute(builder: (BuildContext context) => new MyApp()));
   }
 
   void onChangePassword() {

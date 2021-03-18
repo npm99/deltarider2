@@ -9,7 +9,7 @@ import 'package:deltarider2/field/showtoast.dart';
 import 'package:deltarider2/recieve/send.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
 import 'detail_order.dart';
 import '../api/toJsonOrder.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class _OrderState extends State<Order> {
                     child: Text('ปิดออก')),
                 TextButton(
                     onPressed: () async {
-                      dynamic token = await FlutterSession().get('token');
+                      // dynamic token = await FlutterSession().get('token');
                       confirmOrder(orderId, token['data']['admin_id']);
                       Navigator.pop(context, 'รับงานสำเร็จ');
                     },
@@ -84,7 +84,6 @@ class _OrderState extends State<Order> {
     //return null;
   }
 
-
   @override
   void initState() {
     _stream = databaseDelivery.onValue.asyncExpand((event) => getOrders());
@@ -96,10 +95,10 @@ class _OrderState extends State<Order> {
   @override
   void didChangeDependencies() {
     //---------------------------------------------------------
-    databaseRider.onValue.listen((event) {
-      print('key  ${event.snapshot.key}');
-      print('value  ${event.snapshot.value}');
-    });
+    // databaseRider.onValue.listen((event) {
+    //   print('key  ${event.snapshot.key}');
+    //   print('value  ${event.snapshot.value}');
+    // });
     //---------------------------------------------------------
 
     Timer.periodic(Duration(seconds: 15), (timer) {
@@ -114,6 +113,14 @@ class _OrderState extends State<Order> {
     //--------------------------------------------------------
     MyHomePage().createState().notify().asStream();
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    Timer.periodic(Duration(seconds: 15), (timer) {
+      Send().createState().checkReceiveOrders();
+    }).cancel();
+    super.dispose();
   }
 
   @override

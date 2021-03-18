@@ -6,7 +6,7 @@ import 'package:deltarider2/field/body.dart';
 import 'package:deltarider2/field/showtoast.dart';
 import 'package:deltarider2/main_order.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math' show Random;
@@ -65,7 +65,7 @@ class _DetailOrder extends State<DetailOrder> {
                     child: Text('ปิดออก')),
                 TextButton(
                     onPressed: () async {
-                      dynamic token = await FlutterSession().get('token');
+                      // dynamic token = await FlutterSession().get('token');
                       confirmOrder(orderId, token['data']['admin_id']);
                       showToastBottom(
                         text: 'รับงานสำเร็จ',

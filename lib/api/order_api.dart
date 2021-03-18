@@ -3,8 +3,10 @@ import 'dart:typed_data';
 
 import 'package:deltarider2/api/toJsonLocation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
 import '../main.dart';
 import '../main_order.dart';
 import 'toJsonReceiveOrders.dart';
@@ -18,7 +20,7 @@ FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
 FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 Future<List<Orders>> fetchOrders() async {
-  dynamic token = await FlutterSession().get('token');
+  // dynamic token = await FlutterSession().get('token');
   String idRes = token['data']['id_res_auto'];
   final res = await http.get("${Config.API_URL}/load_order/$idRes");
   if (res.statusCode != 200) {
@@ -29,7 +31,7 @@ Future<List<Orders>> fetchOrders() async {
 }
 
 Future<List<ReceiveOrders>> fetchReceiveOrders() async {
-  dynamic token = await FlutterSession().get('token');
+  // dynamic token = await FlutterSession().get('token');
   String riderID = token['data']['admin_id'];
   String idRes = token['data']['id_res_auto'];
   final res =
@@ -51,7 +53,7 @@ Future<List<DetailFood>> fetchDetailFood(String orderID) async {
 }
 
 Future<List<Locations>> fetchLocation() async {
-  dynamic token = await FlutterSession().get('token');
+  // dynamic token = await FlutterSession().get('token');
   String riderID = token['data']['admin_id'];
   String idResAuto = token['data']['id_res_auto'];
   final res = await http
@@ -75,7 +77,7 @@ Stream<List<ReceiveOrders>> getReceiveOrders() async* {
   yield await fetchReceiveOrders();
 }
 
-Future<Null> showNotification({title, body}) async {
+Future<Null> showNotification({title, body ,action}) async {
   final Int64List vibrationPattern = new Int64List(4);
   vibrationPattern[0] = 0;
   vibrationPattern[1] = 1000;
@@ -110,20 +112,33 @@ void requestIOSPermissions(
       );
 }
 
-void initFirebaseMessaging() {
+void initFirebaseMessaging(BuildContext context) {
   firebaseMessaging.configure(
     onMessage: (Map<String, dynamic> message) async {
       print('onMessage: $message');
       Map mapNotification = message["notification"];
       String title = mapNotification["title"];
       String body = mapNotification["body"];
-      showNotification(title: title, body: body);
+      String action = mapNotification['action'];
+      showNotification(title: title, body: body,action: action);
     },
     onLaunch: (Map<String, dynamic> message) async {
       print('onLaunch: $message');
+      print('onMessage: $message');
+      Map mapNotification = message["notification"];
+      String title = mapNotification["title"];
+      String body = mapNotification["body"];
+      String action = mapNotification['action'];
+      showNotification(title: title, body: body,action: action);
     },
     onResume: (Map<String, dynamic> message) async {
       print('onResume: $message');
+      print('onMessage: $message');
+      Map mapNotification = message["notification"];
+      String title = mapNotification["title"];
+      String body = mapNotification["body"];
+      String action = mapNotification['action'];
+      showNotification(title: title, body: body,action: action);
     },
   );
 
@@ -133,4 +148,5 @@ void initFirebaseMessaging() {
       .listen((IosNotificationSettings settings) {
     print("Settings registered: $settings");
   });
+
 }

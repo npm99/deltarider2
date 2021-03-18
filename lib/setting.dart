@@ -1,8 +1,9 @@
 import 'package:deltarider2/config.dart';
+import 'package:deltarider2/main.dart';
 import 'package:deltarider2/menu_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Setting extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SettingState extends State<Setting> {
 
 FutureBuilder userProfile() {
   return FutureBuilder(
-      future: FlutterSession().get('token'),
+      future: sharedPreferences.get('token'),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           dynamic data = snapshot.data;

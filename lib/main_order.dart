@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:deltarider2/api/infoDevice.dart';
 import 'package:deltarider2/drawer.dart';
 import 'package:deltarider2/field/showtoast.dart';
 import 'package:deltarider2/location/location.dart';
@@ -11,12 +13,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_session/flutter_session.dart';
+
+// import 'package:flutter_session/flutter_session.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 
 import 'api/order_api.dart';
+import 'field/onLoad.dart';
 import 'main.dart';
 
 String id, code;
@@ -28,29 +32,11 @@ DatabaseReference databaseReference,
 dynamic token;
 Position position;
 FToast fToast;
+bool logout = false;
 
 class MyHomeApp extends StatelessWidget {
-  Future<void> setNode() async {
-    token = await FlutterSession().get('token');
-    id = await token['data']['id_res_auto'];
-    code = await token['data']['code'];
-
-    databaseReference = firebaseDatabase.reference().child('${id}_${code}');
-
-    databaseDelivery =
-        firebaseDatabase.reference().child('${id}_${code}/delivery');
-
-    databaseAddDelivery =
-        firebaseDatabase.reference().child('${id}_${code}/add_delivery');
-
-    databaseRider = firebaseDatabase.reference().child('${id}_${code}/rider');
-    databaseChat = firebaseDatabase.reference().child('${id}_${code}/chat');
-  }
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    setNode();
     print('aaa');
     return MaterialApp(
       title: 'Delta Food',
@@ -82,13 +68,16 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime backButtonPressTime;
 
   void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (!mounted) return;
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   Future notify() async {
-    token = await FlutterSession().get('token');
+    token = jsonDecode(sharedPreferences.getString('token'));
     id = token['data']['id_res_auto'];
     code = token['data']['code'];
     databaseAddDelivery =
@@ -97,7 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
     bool fist = true;
     databaseAddDelivery.onValue.listen((event) {
       if (!fist) {
-        showNotification(title: 'ออร์เดอร์อัพเดต', body: 'รายการสั่งอาหารมาใหม่');
+        showNotification(
+            title: 'ออร์เดอร์อัพเดต', body: 'รายการสั่งอาหารมาใหม่');
       } else {
         fist = false;
       }
@@ -127,10 +117,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getCurrentLocation() async {
-    Position res = await Geolocator.getCurrentPosition();
-    setState(() {
-      position = res;
-    });
+    if (!mounted) return;
+    if (mounted) {
+      Position res = await Geolocator.getCurrentPosition();
+      setState(() {
+        position = res;
+      });
+    }
   }
 
   @override
@@ -138,6 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
     fToast = FToast();
     fToast.init(context);
     getCurrentLocation();
+    loadInfo();
+    initFirebaseMessaging(context);
 
     databaseDelivery =
         firebaseDatabase.reference().child('${id}_${code}/delivery');
@@ -172,6 +167,14 @@ class _MyHomePageState extends State<MyHomePage> {
       getCurrentLocation();
     });
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    location.onLocationChanged.listen((event) {
+      getCurrentLocation();
+    }).cancel();
+    super.dispose();
   }
 
   @override

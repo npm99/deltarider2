@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:deltarider2/api/order_api.dart';
 import 'package:deltarider2/config.dart';
+import 'package:deltarider2/field/onLoad.dart';
 import 'package:deltarider2/field/password_field.dart';
 import 'package:deltarider2/field/user_field.dart';
 import 'package:deltarider2/main_order.dart';
@@ -10,29 +11,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_session/flutter_session.dart';
+
+// import 'package:flutter_session/flutter_session.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api/infoDevice.dart';
 
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 TargetPlatform plateForm;
+Map<String, dynamic> deviceData = <String, dynamic>{};
+SharedPreferences sharedPreferences;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await firebase_core.Firebase.initializeApp();
-  dynamic token = await FlutterSession().get('token');
+  sharedPreferences = await SharedPreferences.getInstance();
+  token = sharedPreferences.getString('token') ?? '';
   if (Platform.isIOS) {
     MyHomePage().createState().checkGetCurrentLocation();
   }
-  if (token == null) {
-    token = '';
-  } else if (token != '') {
-    MyHomeApp().setNode();
-  }
   print(token);
-  initFirebaseMessaging();
+  // if (token == null) {
+  //   token = '';
+  // } else
+    if (token != '') {
+    setNode();
+  }
   runApp(MaterialApp(
     home: token == '' ? MyApp() : MyHomeApp(),
     theme:
@@ -47,11 +53,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyApp extends State<MyApp> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   TextEditingController _user = new TextEditingController();
   TextEditingController _pass = new TextEditingController();
   bool _isLoginOk = true;
   bool _buttonEnable = true;
-  Map<String, dynamic> deviceData = <String, dynamic>{};
 
   bool isEmpty() {
     setState(() {
@@ -72,44 +78,40 @@ class _MyApp extends State<MyApp> {
       'platform': deviceInfo.platform,
       'version': deviceInfo.version,
       'uuid': deviceInfo.uuid,
-      'token':deviceInfo.token
+      'token': deviceInfo.token
     });
-
+    onLoading(context, _keyLoader);
     print(params);
-    // await http.post('${Config.API_URL}/login', body: params).then((res) async {
-    //   print(res.body);
-    //   Map resMap = jsonDecode(res.body) as Map;
-    //   int data = resMap['flag'];
-    //   if (data == 0) {
-    //     setState(() {
-    //       _isLoginOk = false;
-    //       print('fail');
-    //     });
-    //   } else {
-    //     await FlutterSession().set('token', res.body);
-    //     setState(() {
-    //       _isLoginOk = true;
-    //       print('success');
-    //       Navigator.of(context).pop();
-    //       Navigator.push(
-    //           context,
-    //           new MaterialPageRoute(
-    //               builder: (BuildContext context) => new MyHomeApp()));
-    //     });
-    //   }
-    // });
-  }
-
-  Future loadData() async {
-    var _deviceData = await getId();
-    setState(() {
-      deviceData = _deviceData;
+    await http.post('${Config.API_URL}/login', body: params).then((res) async {
+      print(res.body);
+      Map resMap = jsonDecode(res.body) as Map;
+      int data = resMap['flag'];
+      if (data == 0) {
+        setState(() {
+          _isLoginOk = false;
+          print('fail');
+        });
+      } else {
+        await sharedPreferences.setString('token', res.body);
+        setState(() {
+          _isLoginOk = true;
+          setNode();
+          print('success');
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+              .pop(); //close the dialoge
+          Navigator.of(context).pop();
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) => new MyHomeApp()));
+        });
+      }
     });
   }
 
   @override
   void initState() {
-    loadData();
+    loadInfo();
     super.initState();
   }
 
