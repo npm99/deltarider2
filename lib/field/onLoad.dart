@@ -13,13 +13,18 @@ Future<void> onLoading(BuildContext context, GlobalKey key) async {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SimpleDialog(
+          titlePadding: EdgeInsets.all(5),
+          contentPadding: EdgeInsets.only(bottom: 20),
+          title: Center(child: Text('Loading...')),
           key: key,
           // color: Colors.white,
-          child: SpinKitRing(
-            color: Colors.deepPurple[500],
-            lineWidth: 5,
-          ),
+          children: [
+            SpinKitRing(
+              color: Colors.deepPurple[500],
+              lineWidth: 5,
+            ),
+          ],
         );
       });
 }
@@ -33,10 +38,11 @@ Future<void> setNode() async {
 
   databaseDelivery =
       firebaseDatabase.reference().child('${id}_${code}/delivery');
-
+  databaseCustomer = firebaseDatabase.reference().child('${id}_${code}/orders');
   databaseAddDelivery =
       firebaseDatabase.reference().child('${id}_${code}/add_delivery');
 
   databaseRider = firebaseDatabase.reference().child('${id}_${code}/rider');
   databaseChat = firebaseDatabase.reference().child('${id}_${code}/chat');
+  databaseNoti = firebaseDatabase.reference().child('${id}_${code}/noti');
 }

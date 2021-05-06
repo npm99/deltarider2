@@ -112,31 +112,31 @@ class Member {
   Member({
     this.mmId,
     this.mmName,
-    this.picUrl,
     this.userId,
     this.phoneId,
+    this.picUrl,
   });
 
   String mmId;
   String mmName;
-  String picUrl;
   String userId;
   String phoneId;
+  String picUrl;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
     mmId: json["mm_id"],
     mmName: json["mm_name"],
-    picUrl: json["pic_url"],
     userId: json["userId"],
     phoneId: json["phone_id"],
+    picUrl: json["pic_url"],
   );
 
   Map<String, dynamic> toJson() => {
     "mm_id": mmId,
     "mm_name": mmName,
-    "pic_url": picUrl,
     "userId": userId,
     "phone_id": phoneId,
+    "pic_url": picUrl,
   };
 }
 

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:deltarider2/api/infoDevice.dart';
 import 'package:deltarider2/drawer.dart';
 import 'package:deltarider2/field/showtoast.dart';
+import 'package:deltarider2/history.dart';
 import 'package:deltarider2/location/location.dart';
 import 'package:deltarider2/order/order.dart';
 import 'package:deltarider2/recieve/send.dart';
@@ -28,7 +29,9 @@ DatabaseReference databaseReference,
     databaseDelivery,
     databaseAddDelivery,
     databaseRider,
-    databaseChat;
+    databaseChat,
+    databaseCustomer,
+    databaseNoti;
 dynamic token;
 Position position;
 FToast fToast;
@@ -62,8 +65,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Location location;
   int _selectedIndex = 0;
-  final List<Widget> _children = [Order(), Send(), PageLocations(), Setting()];
-  final List<String> _appBar = ['ออร์เดอร์', 'การจัดส่ง', 'แผนที่', ''];
+  final List<Widget> _children = [
+    Order(),
+    Send(),
+    PageLocations(),
+    HistoryPage()
+  ];
+  final List<String> _appBar = ['ออร์เดอร์', 'การจัดส่ง', 'แผนที่', 'ประวัติ'];
   final GlobalKey _scaffoldKey = new GlobalKey<ScaffoldState>();
   DateTime backButtonPressTime;
 
@@ -128,6 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    location = new Location();
     fToast = FToast();
     fToast.init(context);
     getCurrentLocation();
@@ -159,7 +168,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void didChangeDependencies() async {
-    location = new Location();
     if (position == null) {
       getCurrentLocation();
     }
@@ -215,6 +223,11 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.map_outlined),
             activeIcon: Icon(Icons.map),
             title: Text('แผนที่'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history_rounded),
+            activeIcon: Icon(Icons.history_rounded),
+            title: Text('ประวัติ'),
           ),
           // BottomNavigationBarItem(
           //   icon: Icon(CupertinoIcons.gear_alt),

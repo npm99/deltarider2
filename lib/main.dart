@@ -36,13 +36,15 @@ void main() async {
   // if (token == null) {
   //   token = '';
   // } else
-    if (token != '') {
+  if (token != '') {
     setNode();
   }
   runApp(MaterialApp(
     home: token == '' ? MyApp() : MyHomeApp(),
-    theme:
-        ThemeData(textButtonTheme: TextButtonThemeData(), fontFamily: 'Kanit'),
+    theme: ThemeData(
+        primaryColor: Colors.deepPurple,
+        textButtonTheme: TextButtonThemeData(),
+        fontFamily: 'Kanit'),
     debugShowCheckedModeBanner: false,
   ));
 }
@@ -71,6 +73,7 @@ class _MyApp extends State<MyApp> {
   }
 
   Future<void> clickLogin() async {
+    FocusScope.of(context).unfocus();
     DeviceInfo deviceInfo = DeviceInfo.fromJson(deviceData);
     String params = jsonEncode(<String, String>{
       'username': _user.text,

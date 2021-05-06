@@ -303,6 +303,20 @@
             </list>
           </value>
         </entry>
+        <entry key="image_picker">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.6.7+22/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="image_picker_platform_interface">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_platform_interface-1.1.6/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="intl">
           <value>
             <list>
@@ -675,6 +689,8 @@
       <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.2/lib" />
       <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-3.1.4/lib" />
       <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/image-2.1.19/lib" />
+      <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.6.7+22/lib" />
+      <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_platform_interface-1.1.6/lib" />
       <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.16.1/lib" />
       <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/js-0.6.2/lib" />
       <root url="file://$PROJECT_DIR$/../../../Plugin/flutter/.pub-cache/hosted/pub.dartlang.org/location-3.2.1/lib" />

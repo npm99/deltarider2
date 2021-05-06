@@ -68,6 +68,7 @@ class _OrderState extends State<Order> {
 
       if (res.body == '1') {
         databaseDelivery.set(randomizer.nextInt(100));
+        databaseCustomer.child("$orderID").set(randomizer.nextInt(100));
         showToastBottom(
             text: 'รับงานสำเร็จ', color: Colors.black.withOpacity(0.8));
       } else {
@@ -95,7 +96,7 @@ class _OrderState extends State<Order> {
   @override
   void didChangeDependencies() {
     //---------------------------------------------------------
-    // databaseRider.onValue.listen((event) {
+    // databaseNoti.onValue.listen((event) {
     //   print('key  ${event.snapshot.key}');
     //   print('value  ${event.snapshot.value}');
     // });
